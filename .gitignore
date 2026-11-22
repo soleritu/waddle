@@ -1,0 +1,40 @@
+# Everything below is made or downloaded when Waddle runs from this folder (portable mode).
+# None of it belongs in the repository.
+
+# secrets
+api-keys.txt
+app-token.txt
+.env
+
+# models and engines
+models/
+llama/
+llama-*/
+sd/
+*.gguf
+*.safetensors
+
+# your data
+ai.ini
+ai.ini.*
+ui.json
+mcp.json
+model-info.json
+model-shapes.json
+evals.json
+tune.json
+arena.json
+chats/
+images/
+audio/
+backups/
+exports/
+logs/
+portable
+
+# builds
+target/
+/waddle.exe
+/WebView2Loader.dll
+*.old
+*.new
