@@ -1,0 +1,13 @@
+{
+  "name": "waddle-ui-tests",
+  "private": true,
+  "description": "Renders every dashboard page in jsdom with made-up answers and fails on script errors.",
+  "scripts": {
+    "test": "node ui.test.js",
+    "shots": "node shots.mjs"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "jsdom": "^24.1.3"
+  }
+}

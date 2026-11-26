@@ -1,0 +1,20 @@
+# docker compose -f packaging/docker/compose.yaml up -d, then: docker compose logs waddle
+services:
+  waddle:
+    image: ghcr.io/soleritu/waddle:latest          # or :vulkan for AMD and Intel GPUs
+    ports:
+      - "5050:5050"   # the dashboard
+      - "5001:5001"   # your models, OpenAI- and Anthropic-compatible
+      - "5002:5002"   # the image server
+    volumes:
+      - waddle:/data  # models, chats, pictures, and settings
+    restart: unless-stopped
+    # NVIDIA GPUs (needs the NVIDIA Container Toolkit):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices: [{driver: nvidia, count: all, capabilities: [gpu]}]
+    # AMD and Intel GPUs, with the :vulkan image:
+    # devices: ["/dev/dri:/dev/dri"]
+volumes:
+  waddle:
