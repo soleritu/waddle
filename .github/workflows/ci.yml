@@ -1,0 +1,51 @@
+# Checks every push and pull request: the Rust tests on all three systems, every dashboard page,
+# and that the Docker image builds and starts.
+name: ci
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev libxdo-dev
+      - run: cargo test
+      - run: cargo build --no-default-features
+  ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+        working-directory: tests/ui
+      - run: npm test
+        working-directory: tests/ui
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f packaging/docker/Dockerfile -t waddle-test .
+      - name: Starts and prints the sign-in link
+        run: |
+          docker run -d --name waddle-ci -p 5050:5050 waddle-test
+          for i in $(seq 1 30); do docker logs waddle-ci 2>&1 | grep -q "key=" && break; sleep 1; done
+          docker logs waddle-ci
+          docker logs waddle-ci 2>&1 | grep -q "key="
+          curl -fsS -o /dev/null -w "%{http_code}\n" "http://localhost:5050/" || true
+  macos-app:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash packaging/macos/build-app.sh
+      - run: test -x target/dist/Waddle.app/Contents/MacOS/waddle && lipo -info target/dist/Waddle.app/Contents/MacOS/waddle
