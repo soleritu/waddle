@@ -53,6 +53,32 @@
 
 Standalone binaries are on the release page: `waddle-windows-x64.exe`, `waddle-macos`, `waddle-linux-x64`. The apps aren't signed with paid certificates: on macOS right-click › **Open** the first time; on Windows SmartScreen choose **More info › Run anyway**.
 
+### Docker Compose
+
+Save this as `compose.yaml` (also in [`packaging/docker/compose.yaml`](packaging/docker/compose.yaml)), then run `docker compose up -d` and `docker compose logs waddle` for the sign-in link.
+
+```yaml
+services:
+  waddle:
+    image: ghcr.io/soleritu/waddle:latest   # :vulkan for AMD and Intel GPUs
+    ports:
+      - "5050:5050"   # dashboard
+      - "5001:5001"   # your models (OpenAI and Anthropic API)
+      - "5002:5002"   # image server
+    volumes:
+      - waddle:/data  # models, chats, pictures, settings
+    restart: unless-stopped
+    # NVIDIA (needs the NVIDIA Container Toolkit):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices: [{driver: nvidia, count: all, capabilities: [gpu]}]
+    # AMD and Intel, with :vulkan:
+    # devices: ["/dev/dri:/dev/dri"]
+volumes:
+  waddle:
+```
+
 ## Showcase
 
 Screenshots from a running Waddle with real models.

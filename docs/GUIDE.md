@@ -98,6 +98,8 @@ docker run -d --name waddle -p 5050:5050 -p 5001:5001 -p 5002:5002 -v waddle:/da
 docker logs waddle   # sign-in link
 ```
 
+With Docker Compose, use [`packaging/docker/compose.yaml`](../packaging/docker/compose.yaml): `docker compose -f packaging/docker/compose.yaml up -d`, then `docker compose -f packaging/docker/compose.yaml logs waddle`.
+
 `:latest` for CPU and NVIDIA (`--gpus all`), `:vulkan` for AMD and Intel (`--device /dev/dri`). Data lives in `/data`. Update with `docker pull` and a restart. No file picker: type paths such as `/data/models`. The dashboard serves plain HTTP; use an HTTPS proxy beyond your network.
 
 ## Troubleshooting
